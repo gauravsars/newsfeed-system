@@ -42,16 +42,16 @@ mvn spring-boot:run
 
 | Endpoint | Method | Description |
 | --- | --- | --- |
-| `/api/users` | `POST` | Create a user. |
-| `/api/users/{userId}/follow/{followeeId}` | `POST` | Follow another user. |
-| `/api/users/{userId}/interests/{categoryId}` | `POST` | Add an interest category to a user. |
-| `/api/categories` | `POST` | Create a new category. |
-| `/api/categories` | `GET` | List all categories. |
-| `/api/posts` | `POST` | Create a new post for a user with categories. |
-| `/api/posts/{postId}/comments` | `POST` | Comment on a post. |
-| `/api/posts/{postId}/likes` | `POST` | Like a post. |
-| `/api/posts/{postId}/shares` | `POST` | Share a post. |
-| `/api/feed/{userId}` | `GET` | Retrieve the personalized feed for a user. |
+| `/api/users](http://localhost:8080/api/users` | `POST` | Create a user. |
+| `[/api/users/{userId}/follow/{followeeId}](http://localhost:8080/api/users/{userId}/follow/{followeeId})` | `POST` | Follow another user. |
+| `[/api/users/{userId}/interests/{categoryId}](http://localhost:8080/api/users/{userId}/interests/{categoryId})` | `POST` | Add an interest category to a user. |
+| `[/api/categories](http://localhost:8080/api/categories)` | `POST` | Create a new category. |
+| `[/api/categories](http://localhost:8080/api/categories)` | `GET` | List all categories. |
+| `[/api/posts](http://localhost:8080/api/posts)` | `POST` | Create a new post for a user with categories. |
+| `[/api/posts/{postId}/comments](http://localhost:8080/api/posts/{postId}/comments)` | `POST` | Comment on a post. |
+| `[/api/posts/{postId}/likes](http://localhost:8080/api/posts/{postId}/likes?userId={userId})` | `POST` | Like a post. |
+| `[/api/posts/{postId}/shares](http://localhost:8080/api/posts/{postId}/shares?userId={userId})` | `POST` | Share a post. |
+| `[/api/feed/{userId}](http://localhost:8080/api/feed/{userId})` | `GET` | Retrieve the personalized feed for a user. |
 
 Request payloads are validated and will return HTTP 400 responses if validation fails. Standard JPA exceptions (such as missing IDs) surface as HTTP 404 errors.
 
