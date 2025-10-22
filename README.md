@@ -33,8 +33,8 @@ By default the app expects a PostgreSQL instance reachable at `jdbc:postgresql:/
 
 ```bash
 SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/newsfeed \
-SPRING_DATASOURCE_USERNAME=newsfeed \
-SPRING_DATASOURCE_PASSWORD=secret \
+SPRING_DATASOURCE_USERNAME=postgres \
+SPRING_DATASOURCE_PASSWORD=java \
 mvn spring-boot:run
 ```
 
