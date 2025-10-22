@@ -16,7 +16,7 @@ This project is a Spring Boot application that models a social newsfeed with sup
 - Java 17
 - Spring Boot 3
 - Spring Data JPA with Hibernate
-- H2 in-memory database (can be swapped for Postgres or MySQL)
+- PostgreSQL 14+ (configurable via Spring Boot datasource properties)
 - Maven for build management
 
 ## Building and Running
@@ -25,7 +25,18 @@ This project is a Spring Boot application that models a social newsfeed with sup
 mvn spring-boot:run
 ```
 
-The application exposes a REST API on port `8080`. An in-memory H2 console is also available at `http://localhost:8080/h2-console` with the default credentials (`sa`/`sa`).
+The application exposes a REST API on port `8080`.
+
+### Database configuration
+
+By default the app expects a PostgreSQL instance reachable at `jdbc:postgresql://localhost:5432/newsfeed` with a `newsfeed` user/password. Override these settings using environment variables when starting the app:
+
+```bash
+SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/newsfeed \
+SPRING_DATASOURCE_USERNAME=newsfeed \
+SPRING_DATASOURCE_PASSWORD=secret \
+mvn spring-boot:run
+```
 
 ## Key API Endpoints
 
@@ -46,7 +57,7 @@ Request payloads are validated and will return HTTP 400 responses if validation 
 
 ## Database Schema
 
-The project ships with JPA entities that map directly to the schema shared in the requirements. Hibernate will automatically generate the required tables (including the `post_categories` join table) when running against the in-memory database. For production usage, you can point the datasource configuration to an external PostgreSQL or MySQL instance.
+The project ships with JPA entities that map directly to the schema shared in the requirements. Hibernate will automatically generate the required tables (including the `post_categories` join table) when the datasource is configured with `spring.jpa.hibernate.ddl-auto=update` against PostgreSQL. Adjust the setting as needed for schema management in other environments.
 
 ## Testing
 
