@@ -18,7 +18,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "UserInterests")
+@Table(name = "userInterests", schema = "newsfeed_db")
 public class UserInterest {
 
     @EmbeddedId

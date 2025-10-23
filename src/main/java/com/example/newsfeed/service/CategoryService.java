@@ -31,6 +31,8 @@ public class CategoryService {
     }
 
     public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+        List<Category> categories =  categoryRepository.findAll();
+        System.out.println("Hello World");
+        return categories;
     }
 }

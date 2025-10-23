@@ -46,12 +46,14 @@ public class CategoryController {
     }
 
     @GetMapping("/{categoryId}")
-    public CategoryResponse getCategory(@PathVariable Long categoryId) {
+    public CategoryResponse getCategory(@PathVariable("categoryId") Long categoryId) {
         Category category = categoryService.getCategory(categoryId);
-        return new CategoryResponse(
+        CategoryResponse response =  new CategoryResponse(
                 category.getId(),
                 category.getCategoryName(),
                 category.getCreatedAt()
         );
+        System.out.println("Hello World");
+        return response;
     }
 }

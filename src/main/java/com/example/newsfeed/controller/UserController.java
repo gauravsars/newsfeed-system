@@ -40,8 +40,8 @@ public class UserController {
 
     @PostMapping("/{userId}/follow/{followeeId}")
     public ResponseEntity<FollowResponse> followUser(
-            @PathVariable Long userId,
-            @PathVariable Long followeeId
+            @PathVariable("userId") Long userId,
+            @PathVariable("followeeId") Long followeeId
     ) {
         Follow follow = userService.followUser(userId, followeeId);
         FollowResponse response = new FollowResponse(
@@ -54,8 +54,8 @@ public class UserController {
 
     @PostMapping("/{userId}/interests/{categoryId}")
     public ResponseEntity<UserInterestResponse> addInterest(
-            @PathVariable Long userId,
-            @PathVariable Long categoryId
+            @PathVariable("userId") Long userId,
+            @PathVariable("categoryId") Long categoryId
     ) {
         UserInterest interest = userService.addInterest(userId, categoryId);
         UserInterestResponse response = new UserInterestResponse(

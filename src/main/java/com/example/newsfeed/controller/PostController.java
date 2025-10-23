@@ -39,7 +39,7 @@ public class PostController {
 
     @PostMapping("/{postId}/comments")
     public ResponseEntity<CommentResponse> addComment(
-            @PathVariable Long postId,
+            @PathVariable("postId") Long postId,
             @Valid @RequestBody CommentRequest request
     ) {
         Comment comment = postService.addComment(postId, request);
@@ -55,8 +55,8 @@ public class PostController {
 
     @PostMapping("/{postId}/likes")
     public ResponseEntity<LikeResponse> likePost(
-            @PathVariable Long postId,
-            @RequestParam Long userId
+            @PathVariable("postId") Long postId,
+            @RequestParam("userId") Long userId
     ) {
         PostLike like = postService.likePost(postId, userId);
         LikeResponse response = new LikeResponse(
@@ -70,8 +70,8 @@ public class PostController {
 
     @PostMapping("/{postId}/shares")
     public ResponseEntity<ShareResponse> sharePost(
-            @PathVariable Long postId,
-            @RequestParam Long userId
+            @PathVariable("postId") Long postId,
+            @RequestParam("userId") Long userId
     ) {
         Share share = postService.sharePost(postId, userId);
         ShareResponse response = new ShareResponse(
