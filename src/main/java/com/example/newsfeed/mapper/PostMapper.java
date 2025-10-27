@@ -1,8 +1,14 @@
 package com.example.newsfeed.mapper;
 
+import com.example.newsfeed.dto.CommentResponse;
+import com.example.newsfeed.dto.LikeResponse;
 import com.example.newsfeed.dto.PostResponse;
+import com.example.newsfeed.dto.ShareResponse;
 import com.example.newsfeed.dto.UserSummary;
+import com.example.newsfeed.entity.Comment;
 import com.example.newsfeed.entity.Post;
+import com.example.newsfeed.entity.PostLike;
+import com.example.newsfeed.entity.Share;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
@@ -39,6 +45,35 @@ public class PostMapper {
                 likeCount,
                 commentCount,
                 shareCount
+        );
+    }
+
+    public CommentResponse toCommentResponse(Comment comment) {
+        return new CommentResponse(
+                comment.getId(),
+                comment.getPost().getId(),
+                comment.getCommentedBy().getId(),
+                comment.getContent(),
+                comment.getCreatedAt()
+        );
+    }
+
+    public LikeResponse toLikeResponse(PostLike like) {
+        return new LikeResponse(
+                like.getId(),
+                like.getPost().getId(),
+                like.getLikedBy().getId(),
+                like.getCreatedAt()
+        );
+    }
+
+    public ShareResponse toShareResponse(Share share) {
+        return new ShareResponse(
+                share.getId(),
+                share.getPost().getId(),
+                share.getSharedBy().getId(),
+                share.getCreatedAt(),
+                share.isDeleted()
         );
     }
 }

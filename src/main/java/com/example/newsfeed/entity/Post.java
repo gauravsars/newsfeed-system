@@ -26,7 +26,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "posts", schema = "newsfeed_db")
+@Table(name = "Posts")
 public class Post {
 
     @Id
@@ -58,7 +58,6 @@ public class Post {
     @ManyToMany
     @JoinTable(
             name = "post_categories",
-            schema = "newsfeed_db",
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )

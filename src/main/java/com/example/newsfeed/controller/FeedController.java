@@ -17,7 +17,7 @@ public class FeedController {
     private final FeedService feedService;
 
     @GetMapping("/{userId}")
-    public List<PostResponse> getFeed(@PathVariable("userId") Long userId) {
+    public List<PostResponse> getFeed(@PathVariable Long userId) {
         return feedService.getFeedForUser(userId);
     }
 }

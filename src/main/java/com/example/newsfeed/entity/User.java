@@ -22,7 +22,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "users", schema = "newsfeed_db")
+@Table(name = "Users")
 public class User {
 
     public enum Status {

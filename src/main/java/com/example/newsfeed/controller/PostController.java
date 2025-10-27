@@ -6,11 +6,6 @@ import com.example.newsfeed.dto.CreatePostRequest;
 import com.example.newsfeed.dto.LikeResponse;
 import com.example.newsfeed.dto.PostResponse;
 import com.example.newsfeed.dto.ShareResponse;
-import com.example.newsfeed.entity.Comment;
-import com.example.newsfeed.entity.Post;
-import com.example.newsfeed.entity.PostLike;
-import com.example.newsfeed.entity.Share;
-import com.example.newsfeed.mapper.PostMapper;
 import com.example.newsfeed.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,58 +24,37 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostController {
 
     private final PostService postService;
-    private final PostMapper postMapper;
 
     @PostMapping
     public ResponseEntity<PostResponse> createPost(@Valid @RequestBody CreatePostRequest request) {
-        Post post = postService.createPost(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(postMapper.toResponse(post));
+        PostResponse response = postService.createPost(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/{postId}/comments")
     public ResponseEntity<CommentResponse> addComment(
-            @PathVariable("postId") Long postId,
+            @PathVariable Long postId,
             @Valid @RequestBody CommentRequest request
     ) {
-        Comment comment = postService.addComment(postId, request);
-        CommentResponse response = new CommentResponse(
-                comment.getId(),
-                comment.getPost().getId(),
-                comment.getCommentedBy().getId(),
-                comment.getContent(),
-                comment.getCreatedAt()
-        );
+        CommentResponse response = postService.addComment(postId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/{postId}/likes")
     public ResponseEntity<LikeResponse> likePost(
-            @PathVariable("postId") Long postId,
-            @RequestParam("userId") Long userId
+            @PathVariable Long postId,
+            @RequestParam Long userId
     ) {
-        PostLike like = postService.likePost(postId, userId);
-        LikeResponse response = new LikeResponse(
-                like.getId(),
-                like.getPost().getId(),
-                like.getLikedBy().getId(),
-                like.getCreatedAt()
-        );
+        LikeResponse response = postService.likePost(postId, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/{postId}/shares")
     public ResponseEntity<ShareResponse> sharePost(
-            @PathVariable("postId") Long postId,
-            @RequestParam("userId") Long userId
+            @PathVariable Long postId,
+            @RequestParam Long userId
     ) {
-        Share share = postService.sharePost(postId, userId);
-        ShareResponse response = new ShareResponse(
-                share.getId(),
-                share.getPost().getId(),
-                share.getSharedBy().getId(),
-                share.getCreatedAt(),
-                share.isDeleted()
-        );
+        ShareResponse response = postService.sharePost(postId, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

@@ -1,13 +1,17 @@
 package com.example.newsfeed.service;
 
+import com.example.newsfeed.dto.CreateUserRequest;
+import com.example.newsfeed.dto.FollowResponse;
+import com.example.newsfeed.dto.UserInterestResponse;
+import com.example.newsfeed.dto.UserResponse;
+import com.example.newsfeed.mapper.UserMapper;
 import com.example.newsfeed.entity.Category;
 import com.example.newsfeed.entity.Follow;
 import com.example.newsfeed.entity.FollowId;
 import com.example.newsfeed.entity.User;
+import com.example.newsfeed.entity.User.Status;
 import com.example.newsfeed.entity.UserInterest;
 import com.example.newsfeed.entity.UserInterestId;
-import com.example.newsfeed.dto.CreateUserRequest;
-import com.example.newsfeed.entity.User.Status;
 import com.example.newsfeed.repository.CategoryRepository;
 import com.example.newsfeed.repository.FollowRepository;
 import com.example.newsfeed.repository.UserInterestRepository;
@@ -27,9 +31,10 @@ public class UserService {
     private final FollowRepository followRepository;
     private final UserInterestRepository userInterestRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
 
     @Transactional
-    public User createUser(CreateUserRequest request) {
+    public UserResponse createUser(CreateUserRequest request) {
         userRepository.findByEmail(request.getEmail()).ifPresent(existing -> {
             throw new IllegalStateException("User already exists with email: " + request.getEmail());
         });
@@ -39,11 +44,11 @@ public class UserService {
         user.setEmail(request.getEmail());
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setStatus(Status.active);
-        return userRepository.save(user);
+        return userMapper.toResponse(userRepository.save(user));
     }
 
     @Transactional
-    public Follow followUser(Long followerId, Long followeeId) {
+    public FollowResponse followUser(Long followerId, Long followeeId) {
         if (followerId.equals(followeeId)) {
             throw new IllegalArgumentException("Users cannot follow themselves");
         }
@@ -60,23 +65,25 @@ public class UserService {
         follow.setId(new FollowId(followerId, followeeId));
         follow.setFollower(follower);
         follow.setFollowee(followee);
-        return followRepository.save(follow);
+        return userMapper.toFollowResponse(followRepository.save(follow));
     }
 
     @Transactional
-    public UserInterest addInterest(Long userId, Long categoryId) {
+    public UserInterestResponse addInterest(Long userId, Long categoryId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found"));
 
         UserInterestId id = new UserInterestId(userId, categoryId);
-        return userInterestRepository.findById(id).orElseGet(() -> {
-            UserInterest interest = new UserInterest();
-            interest.setId(id);
-            interest.setUser(user);
-            interest.setCategory(category);
-            return userInterestRepository.save(interest);
-        });
+        return userInterestRepository.findById(id)
+                .map(userMapper::toInterestResponse)
+                .orElseGet(() -> {
+                    UserInterest interest = new UserInterest();
+                    interest.setId(id);
+                    interest.setUser(user);
+                    interest.setCategory(category);
+                    return userMapper.toInterestResponse(userInterestRepository.save(interest));
+                });
     }
 }

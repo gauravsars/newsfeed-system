@@ -1,13 +1,18 @@
 package com.example.newsfeed.service;
 
 import com.example.newsfeed.dto.CommentRequest;
+import com.example.newsfeed.dto.CommentResponse;
 import com.example.newsfeed.dto.CreatePostRequest;
+import com.example.newsfeed.dto.LikeResponse;
+import com.example.newsfeed.dto.PostResponse;
+import com.example.newsfeed.dto.ShareResponse;
 import com.example.newsfeed.entity.Category;
 import com.example.newsfeed.entity.Comment;
 import com.example.newsfeed.entity.Post;
 import com.example.newsfeed.entity.PostLike;
 import com.example.newsfeed.entity.Share;
 import com.example.newsfeed.entity.User;
+import com.example.newsfeed.mapper.PostMapper;
 import com.example.newsfeed.repository.CategoryRepository;
 import com.example.newsfeed.repository.CommentRepository;
 import com.example.newsfeed.repository.PostLikeRepository;
@@ -32,9 +37,10 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final PostLikeRepository postLikeRepository;
     private final ShareRepository shareRepository;
+    private final PostMapper postMapper;
 
     @Transactional
-    public Post createPost(CreatePostRequest request) {
+    public PostResponse createPost(CreatePostRequest request) {
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
@@ -49,11 +55,11 @@ public class PostService {
         post.setMediaUrl(request.getMediaUrl());
         post.setCategories(new HashSet<>(categories));
 
-        return postRepository.save(post);
+        return postMapper.toResponse(postRepository.save(post));
     }
 
     @Transactional
-    public Comment addComment(Long postId, CommentRequest request) {
+    public CommentResponse addComment(Long postId, CommentRequest request) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post not found"));
         if (post.isDeleted()) {
@@ -68,11 +74,11 @@ public class PostService {
         comment.setCommentedBy(user);
         comment.setContent(request.getContent());
 
-        return commentRepository.save(comment);
+        return postMapper.toCommentResponse(commentRepository.save(comment));
     }
 
     @Transactional
-    public PostLike likePost(Long postId, Long userId) {
+    public LikeResponse likePost(Long postId, Long userId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post not found"));
         if (post.isDeleted()) {
@@ -89,7 +95,7 @@ public class PostService {
         PostLike like = new PostLike();
         like.setPost(post);
         like.setLikedBy(user);
-        return postLikeRepository.save(like);
+        return postMapper.toLikeResponse(postLikeRepository.save(like));
     }
 
     @Transactional
@@ -99,7 +105,7 @@ public class PostService {
     }
 
     @Transactional
-    public Share sharePost(Long postId, Long userId) {
+    public ShareResponse sharePost(Long postId, Long userId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post not found"));
         if (post.isDeleted()) {
@@ -112,7 +118,7 @@ public class PostService {
         Share share = new Share();
         share.setPost(post);
         share.setSharedBy(user);
-        return shareRepository.save(share);
+        return postMapper.toShareResponse(shareRepository.save(share));
     }
 
     public Post getPostOrThrow(Long postId) {

@@ -19,7 +19,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "comments", schema = "newsfeed_db")
+@Table(name = "Comments")
 public class Comment {
 
     @Id

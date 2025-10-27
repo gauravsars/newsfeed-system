@@ -2,11 +2,9 @@ package com.example.newsfeed.controller;
 
 import com.example.newsfeed.dto.CategoryResponse;
 import com.example.newsfeed.dto.CreateCategoryRequest;
-import com.example.newsfeed.entity.Category;
 import com.example.newsfeed.service.CategoryService;
 import jakarta.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,34 +24,17 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<CategoryResponse> createCategory(@Valid @RequestBody CreateCategoryRequest request) {
-        Category category = categoryService.createCategory(request);
-        CategoryResponse response = new CategoryResponse(
-                category.getId(),
-                category.getCategoryName(),
-                category.getCreatedAt()
-        );
+        CategoryResponse response = categoryService.createCategory(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping
     public List<CategoryResponse> getCategories() {
-        return categoryService.getAllCategories().stream()
-                .map(category -> new CategoryResponse(
-                        category.getId(),
-                        category.getCategoryName(),
-                        category.getCreatedAt()))
-                .collect(Collectors.toList());
+        return categoryService.getAllCategories();
     }
 
     @GetMapping("/{categoryId}")
-    public CategoryResponse getCategory(@PathVariable("categoryId") Long categoryId) {
-        Category category = categoryService.getCategory(categoryId);
-        CategoryResponse response =  new CategoryResponse(
-                category.getId(),
-                category.getCategoryName(),
-                category.getCreatedAt()
-        );
-        System.out.println("Hello World");
-        return response;
+    public CategoryResponse getCategory(@PathVariable Long categoryId) {
+        return categoryService.getCategory(categoryId);
     }
 }

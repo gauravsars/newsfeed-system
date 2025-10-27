@@ -1,10 +1,13 @@
 package com.example.newsfeed.service;
 
+import com.example.newsfeed.dto.CategoryResponse;
 import com.example.newsfeed.dto.CreateCategoryRequest;
-import com.example.newsfeed.entity.Category;
 import com.example.newsfeed.repository.CategoryRepository;
+import com.example.newsfeed.mapper.CategoryMapper;
+import com.example.newsfeed.entity.Category;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,25 +17,28 @@ import org.springframework.transaction.annotation.Transactional;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
 
     @Transactional
-    public Category createCategory(CreateCategoryRequest request) {
+    public CategoryResponse createCategory(CreateCategoryRequest request) {
         return categoryRepository.findByCategoryName(request.getName())
+                .map(categoryMapper::toResponse)
                 .orElseGet(() -> {
                     Category category = new Category();
                     category.setCategoryName(request.getName());
-                    return categoryRepository.save(category);
+                    return categoryMapper.toResponse(categoryRepository.save(category));
                 });
     }
 
-    public Category getCategory(Long id) {
-        return categoryRepository.findById(id)
+    public CategoryResponse getCategory(Long id) {
+        var category = categoryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found"));
+        return categoryMapper.toResponse(category);
     }
 
-    public List<Category> getAllCategories() {
-        List<Category> categories =  categoryRepository.findAll();
-        System.out.println("Hello World");
-        return categories;
+    public List<CategoryResponse> getAllCategories() {
+        return categoryRepository.findAll().stream()
+                .map(categoryMapper::toResponse)
+                .collect(Collectors.toList());
     }
 }

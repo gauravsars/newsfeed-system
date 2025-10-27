@@ -33,27 +33,83 @@ By default the app expects a PostgreSQL instance reachable at `jdbc:postgresql:/
 
 ```bash
 SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/newsfeed \
-SPRING_DATASOURCE_USERNAME=postgres \
-SPRING_DATASOURCE_PASSWORD=java \
+SPRING_DATASOURCE_USERNAME=newsfeed \
+SPRING_DATASOURCE_PASSWORD=secret \
 mvn spring-boot:run
 ```
 
-## Key API Endpoints
+## REST API Reference
 
-| Endpoint | Method | Description |
+All endpoints are rooted at the Spring Boot default base URL `http://localhost:8080`.
+
+| Method | URL | Description |
 | --- | --- | --- |
-| `/api/users](http://localhost:8080/api/users` | `POST` | Create a user. |
-| `[/api/users/{userId}/follow/{followeeId}](http://localhost:8080/api/users/{userId}/follow/{followeeId})` | `POST` | Follow another user. |
-| `[/api/users/{userId}/interests/{categoryId}](http://localhost:8080/api/users/{userId}/interests/{categoryId})` | `POST` | Add an interest category to a user. |
-| `[/api/categories](http://localhost:8080/api/categories)` | `POST` | Create a new category. |
-| `[/api/categories](http://localhost:8080/api/categories)` | `GET` | List all categories. |
-| `[/api/posts](http://localhost:8080/api/posts)` | `POST` | Create a new post for a user with categories. |
-| `[/api/posts/{postId}/comments](http://localhost:8080/api/posts/{postId}/comments)` | `POST` | Comment on a post. |
-| `[/api/posts/{postId}/likes](http://localhost:8080/api/posts/{postId}/likes?userId={userId})` | `POST` | Like a post. |
-| `[/api/posts/{postId}/shares](http://localhost:8080/api/posts/{postId}/shares?userId={userId})` | `POST` | Share a post. |
-| `[/api/feed/{userId}](http://localhost:8080/api/feed/{userId})` | `GET` | Retrieve the personalized feed for a user. |
+| `POST` | `http://localhost:8080/api/users` | Create a user. |
+| `POST` | `http://localhost:8080/api/users/{userId}/follow/{followeeId}` | Follow another user (path variables only, no request body). |
+| `POST` | `http://localhost:8080/api/users/{userId}/interests/{categoryId}` | Add a category to a user's interests (path variables only). |
+| `POST` | `http://localhost:8080/api/categories` | Create a category. |
+| `GET` | `http://localhost:8080/api/categories` | List all categories. |
+| `GET` | `http://localhost:8080/api/categories/{categoryId}` | Get a single category. |
+| `POST` | `http://localhost:8080/api/posts` | Create a post that belongs to one or more categories. |
+| `POST` | `http://localhost:8080/api/posts/{postId}/comments` | Comment on a post. |
+| `POST` | `http://localhost:8080/api/posts/{postId}/likes?userId={userId}` | Like a post (user supplied as query parameter). |
+| `POST` | `http://localhost:8080/api/posts/{postId}/shares?userId={userId}` | Share a post (user supplied as query parameter). |
+| `GET` | `http://localhost:8080/api/feed/{userId}` | Retrieve the personalized feed for a user. |
 
-Request payloads are validated and will return HTTP 400 responses if validation fails. Standard JPA exceptions (such as missing IDs) surface as HTTP 404 errors.
+### JSON payloads for POST requests
+
+#### Create a user
+
+```json
+{
+  "name": "Alice Johnson",
+  "email": "alice@example.com",
+  "password": "p@ssw0rd"
+}
+```
+
+#### Create a category
+
+```json
+{
+  "name": "Technology"
+}
+```
+
+#### Create a post
+
+```json
+{
+  "userId": 1,
+  "content": "Exploring the latest in AI research.",
+  "mediaUrl": "https://cdn.example.com/posts/ai-update.png",
+  "categoryIds": [1, 3]
+}
+```
+
+`mediaUrl` is optional—omit it if the post contains only text.
+
+#### Add a comment to a post
+
+```json
+{
+  "userId": 2,
+  "content": "Great insights!"
+}
+```
+
+### Example requests without JSON bodies
+
+- **Follow a user:** `POST http://localhost:8080/api/users/1/follow/2`
+- **Add an interest:** `POST http://localhost:8080/api/users/1/interests/5`
+- **Like a post:** `POST http://localhost:8080/api/posts/10/likes?userId=3`
+- **Share a post:** `POST http://localhost:8080/api/posts/10/shares?userId=3`
+
+Request payloads are validated and return HTTP 400 if constraints fail. Standard JPA exceptions (such as referencing missing IDs) surface as HTTP 404 errors.
+
+### Postman collection
+
+Import [`postman/newsfeed-system.postman_collection.json`](postman/newsfeed-system.postman_collection.json) into Postman to get preconfigured requests for every endpoint. The collection uses a `baseUrl` variable that defaults to `http://localhost:8080`; override it in Postman if your server runs on a different host or port.
 
 ## Database Schema
 
